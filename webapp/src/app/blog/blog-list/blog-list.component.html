@@ -1,0 +1,72 @@
+<div class="blog-list">
+  <div class="header-actions">
+    <a routerLink="/posts/new" class="btn btn-primary">+ New Post</a>
+  </div>
+  
+  <div class="filters">
+    <input 
+      type="text" 
+      [(ngModel)]="searchTerm" 
+      (input)="filterPosts()"
+      placeholder="Search posts..."
+      class="search-input">
+  </div>
+
+  <div class="posts-container">
+    <div class="posts-grid">
+      <div *ngFor="let post of filteredPosts" class="post-card">
+        <div *ngIf="editingPostId !== post.id">
+          <h3>{{ post.title }}</h3>
+          <p class="post-content" *ngIf="!isExpanded(post.id)">
+            {{ post.content | slice:0:150 }}...
+          </p>
+          <p class="post-content expanded" *ngIf="isExpanded(post.id)">
+            {{ post.content }}
+          </p>
+          <div class="post-meta">
+            <span>Created: {{ post.created_at | date:'short' }}</span>
+            <span *ngIf="post.updated_at !== post.created_at">
+              Updated: {{ post.updated_at | date:'short' }}
+            </span>
+          </div>
+          <div class="post-actions">
+            <button (click)="toggleExpand(post.id)" class="btn btn-sm btn-primary">
+              {{ isExpanded(post.id) ? 'Collapse' : 'Open' }}
+            </button>
+            <button (click)="startEdit(post)" class="btn btn-sm btn-secondary">Edit</button>
+            <button (click)="deletePost(post.id)" class="btn btn-sm btn-danger">Delete</button>
+          </div>
+        </div>
+        
+        <div *ngIf="editingPostId === post.id" class="edit-form">
+          <form (ngSubmit)="saveEdit()">
+            <div class="form-group">
+              <label for="edit-title-{{post.id}}">Title</label>
+              <input 
+                type="text" 
+                id="edit-title-{{post.id}}"
+                [(ngModel)]="editingPost.title" 
+                name="edit-title-{{post.id}}"
+                required
+                class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="edit-content-{{post.id}}">Content</label>
+              <textarea 
+                id="edit-content-{{post.id}}"
+                [(ngModel)]="editingPost.content" 
+                name="edit-content-{{post.id}}"
+                rows="6"
+                required
+                class="form-control"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-sm btn-primary">Save</button>
+              <button type="button" (click)="cancelEdit()" class="btn btn-sm">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

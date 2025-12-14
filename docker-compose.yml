@@ -1,0 +1,40 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: challenge_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - challenge_network
+
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    container_name: challenge_webapp
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./webapp:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm start
+    networks:
+      - challenge_network
+    depends_on:
+      - api
+
+networks:
+  challenge_network:
+    driver: bridge
+
+volumes:
+  sqlite_data:
+

@@ -1,0 +1,36 @@
+<div class="blog-detail">
+  <div class="header-actions">
+    <a routerLink="/posts" class="btn">Back to List</a>
+  </div>
+
+  <h2>Create New Post</h2>
+  
+  <form (ngSubmit)="savePost()">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input 
+        type="text" 
+        id="title" 
+        [(ngModel)]="post.title" 
+        name="title"
+        required
+        class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label for="content">Content</label>
+      <textarea 
+        id="content" 
+        [(ngModel)]="post.content" 
+        name="content"
+        rows="10"
+        required
+        class="form-control"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Create</button>
+      <button type="button" (click)="cancel()" class="btn">Cancel</button>
+    </div>
+  </form>
+</div>
