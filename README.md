@@ -14,8 +14,8 @@ Este proyecto es un challenge técnico para evaluar habilidades full-stack. El p
 
 1. **Clonar este repositorio** (OBLIGATORIO):
    ```bash
-   git clone <URL-del-repositorio-en-GitHub>
-   cd challenge-plataforma
+   git clone https://gitlab.com/BrunoGuidi/challenge-plataforma-tradespark.git
+   cd challenge-plataforma-tradespark
    ```
    - **Importante**: Usa `git clone` (NO descargues como ZIP ni uses `git clone --depth 1`)
    - Esto preserva todo el historial de commits necesario para la evaluación
