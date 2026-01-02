@@ -1,0 +1,11 @@
+# Force LF line endings for shell scripts
+*.sh text eol=lf
+
+# Force LF for Docker and YAML files (Unix-style)
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Let Git handle other text files automatically
+* text=auto
+
