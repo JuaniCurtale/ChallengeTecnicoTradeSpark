@@ -110,10 +110,17 @@ Actualmente, el filtrado se realiza client-side: todos los posts se obtienen y s
 2. **Crear repositorio remoto**: Crea un repositorio vacío en GitHub o GitLab
 3. **Push a tu repositorio remoto**:
    ```bash
-   git remote add origin <URL-de-tu-repositorio>
+   # Como el repositorio clonado ya tiene un origin configurado, cambia la URL:
+   git remote set-url origin <URL-de-tu-repositorio>
    git push -u origin --all
    ```
    - Esto subirá todo el historial de commits (incluyendo los originales) a tu repositorio
+   - **Nota**: Si prefieres, también puedes remover el origin existente y agregar uno nuevo:
+     ```bash
+     git remote remove origin
+     git remote add origin <URL-de-tu-repositorio>
+     git push -u origin --all
+     ```
 4. **Repositorio público**: Asegúrate de que tu repositorio sea público
 5. **Notificación**: Envía un email cuando el challenge esté completado con el siguiente formato:
    - **Para**: tech@tradespark.la
