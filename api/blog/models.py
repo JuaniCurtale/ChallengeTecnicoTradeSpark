@@ -6,6 +6,7 @@ class BlogPost(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    categories = models.ManyToManyField('Category', related_name='posts', blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -17,6 +18,7 @@ class BlogPost(models.Model):
 class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    posts = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
 
     class Meta:
         ordering = ['created_at']
