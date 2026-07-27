@@ -3,6 +3,8 @@ from .models import BlogPost, Comment, Category
 
 
 class BlogPostSerializer(serializers.ModelSerializer):
+    categories_detail = CategorySerializer(source='categories', many=True, read_only=True)
+    
     class Meta:
         model = BlogPost
         fields = ['id', 'title', 'content', 'created_at', 'updated_at']
