@@ -3,34 +3,85 @@
     <a routerLink="/posts" class="btn">Back to List</a>
   </div>
 
-  <h2>Create New Post</h2>
-  
-  <form (ngSubmit)="savePost()">
-    <div class="form-group">
-      <label for="title">Title</label>
-      <input 
-        type="text" 
-        id="title" 
-        [(ngModel)]="post.title" 
-        name="title"
-        required
-        class="form-control">
-    </div>
+  <ng-container *ngIf="postId; else createMode">
+    <h2>{{ post.title }}</h2>
+    <p class="post-content">{{ post.content }}</p>
 
-    <div class="form-group">
-      <label for="content">Content</label>
-      <textarea 
-        id="content" 
-        [(ngModel)]="post.content" 
-        name="content"
-        rows="10"
-        required
-        class="form-control"></textarea>
-    </div>
+    <hr />
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Create</button>
-      <button type="button" (click)="cancel()" class="btn">Cancel</button>
+    <div class="comments-section">
+      <h3>Comments ({{ post.comments?.length || 0 }})</h3>
+
+      <div class="add-comment form-group">
+        <textarea 
+          [(ngModel)]="newCommentContent" 
+          placeholder="Write a comment..." 
+          rows="3" 
+          class="form-control">
+        </textarea>
+        <button 
+          type="button" 
+          (click)="addComment()" 
+          [disabled]="!newCommentContent.trim()" 
+          class="btn btn-primary"
+          style="margin-top: 10px;">
+          Add Comment
+        </button>
+      </div>
+
+      <div class="comments-list" style="margin-top: 20px;">
+        <div *ngFor="let comment of post.comments" class="comment-item" style="border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <p style="margin: 0;">{{ comment.content }}</p>
+            <small class="text-muted" style="color: #6c757d;">{{ comment.created_at | date:'short' }}</small>
+          </div>
+          
+          <button 
+            type="button" 
+            (click)="deleteComment(comment.id!)" 
+            class="btn btn-sm btn-danger" 
+            style="padding: 2px 8px; font-size: 12px;">
+            Delete
+          </button>
+        </div>
+
+        <p *ngIf="!post.comments || post.comments.length === 0" class="text-muted">
+          No comments yet. Be the first to comment!
+        </p>
+      </div>
     </div>
-  </form>
+  </ng-container>
+
+  <ng-template #createMode>
+    <h2>Create New Post</h2>
+    
+    <form (ngSubmit)="savePost()">
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input 
+          type="text" 
+          id="title" 
+          [(ngModel)]="post.title" 
+          name="title"
+          required
+          class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="content">Content</label>
+        <textarea 
+          id="content" 
+          [(ngModel)]="post.content" 
+          name="content"
+          rows="10"
+          required
+          class="form-control"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="button" (click)="cancel()" class="btn">Cancel</button>
+      </div>
+    </form>
+  </ng-template>
 </div>

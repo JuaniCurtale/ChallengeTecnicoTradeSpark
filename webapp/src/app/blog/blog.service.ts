@@ -2,6 +2,24 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+//Definimos la interfaz del comentario
+export interface Comment {
+  id?: number;
+  post: number;
+  content: string;
+  created_at?: string;
+}
+
+// Agregamos comentarios al Blog
+export interface BlogPost {
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  comments?: Comment[]; 
+}
+
 export interface BlogPost {
   id: number;
   title: string;
@@ -36,6 +54,17 @@ export class BlogService {
 
   deletePost(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/posts/${id}/`);
+  }
+
+  createComment(comment: { post: number; content: string }): Observable<Comment> {
+    return this.http.post<Comment>(`${this.apiUrl}/comments/`, comment);
+  }
+  deleteComment(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/comments/${id}/`);
+  }
+
+  updateComment(id: number, content: string): Observable<Comment> {
+  return this.http.patch<Comment>(`${this.apiUrl}/comments/${id}/`, { content });
   }
 }
 

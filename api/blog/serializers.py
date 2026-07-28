@@ -27,8 +27,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
         )
 
     # Incluye los comentarios asociados al post (solo lectura)
-    comments = CommentSerializer(source='comment_set', many=True, read_only=True)
-
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = BlogPost

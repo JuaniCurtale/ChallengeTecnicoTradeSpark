@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from django_filters import rest_framework as filters
-from .models import BlogPost
-from .serializers import BlogPostSerializer
+from .models import BlogPost, Comment,Category
+from .serializers import BlogPostSerializer, CommentSerializer, CategorySerializer
 
 
 #Clase destinada a definir reglas de filtrado
@@ -16,7 +16,17 @@ class BlogPostFilter(filters.FilterSet):
     class Meta:
         model = BlogPost
         fields = ['category','created_at_after','created_at_before']
-        
+
+#Vista para manejar Comentarios (Crear, listar, etc.)
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    filterset_fields = ['post']
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
 class BlogPostViewSet(viewsets.ModelViewSet):
     queryset = BlogPost.objects.all().order_by('-created_at')
     serializer_class = BlogPostSerializer

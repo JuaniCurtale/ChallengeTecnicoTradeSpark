@@ -18,7 +18,7 @@ class BlogPost(models.Model):
 class Comment(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    posts = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
 
     class Meta:
         ordering = ['created_at']

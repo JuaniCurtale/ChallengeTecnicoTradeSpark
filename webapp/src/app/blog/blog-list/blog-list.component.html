@@ -30,9 +30,7 @@
             </span>
           </div>
           <div class="post-actions">
-            <button (click)="toggleExpand(post.id)" class="btn btn-sm btn-primary">
-              {{ isExpanded(post.id) ? 'Collapse' : 'Open' }}
-            </button>
+            <a [routerLink]="['/posts', post.id]" class="btn btn-sm btn-primary">Open</a>
             <button (click)="startEdit(post)" class="btn btn-sm btn-secondary">Edit</button>
             <button (click)="deletePost(post.id)" class="btn btn-sm btn-danger">Delete</button>
           </div>
