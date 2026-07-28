@@ -15,8 +15,20 @@
   <div class="posts-container">
     <div class="posts-grid">
       <div *ngFor="let post of filteredPosts" class="post-card">
+        <!-- MODO LECTURA -->
         <div *ngIf="editingPostId !== post.id">
           <h3>{{ post.title }}</h3>
+
+          <!-- Badges de categorías en cada post -->
+          <div class="categories-badges" *ngIf="post.categories_detail && post.categories_detail.length > 0" style="margin: 6px 0 10px 0;">
+            <span 
+              *ngFor="let cat of post.categories_detail" 
+              class="badge bg-secondary"
+              style="display: inline-block; padding: 3px 8px; margin-right: 5px; background-color: #6c757d; color: #fff; border-radius: 4px; font-size: 11px;">
+              {{ cat.name }}
+            </span>
+          </div>
+
           <p class="post-content" *ngIf="!isExpanded(post.id)">
             {{ post.content | slice:0:150 }}...
           </p>
@@ -36,6 +48,7 @@
           </div>
         </div>
         
+        <!-- MODO EDICIÓN IN-LINE -->
         <div *ngIf="editingPostId === post.id" class="edit-form">
           <form (ngSubmit)="saveEdit()">
             <div class="form-group">
@@ -48,6 +61,25 @@
                 required
                 class="form-control">
             </div>
+
+            <!-- Checkboxes de categorías en edición rápida -->
+            <div class="form-group" style="margin: 12px 0;">
+              <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 6px;">Categories:</label>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                <div *ngFor="let cat of availableCategories" style="display: flex; align-items: center; gap: 4px;">
+                  <input 
+                    type="checkbox" 
+                    [id]="'edit-cat-' + post.id + '-' + cat.id"
+                    [value]="cat.id"
+                    [checked]="isCategorySelected(cat.id)"
+                    (change)="onCategoryToggle(cat.id, $event)">
+                  <label [for]="'edit-cat-' + post.id + '-' + cat.id" style="font-size: 12px; cursor: pointer; margin: 0;">
+                    {{ cat.name }}
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <div class="form-group">
               <label for="edit-content-{{post.id}}">Content</label>
               <textarea 
@@ -58,7 +90,7 @@
                 required
                 class="form-control"></textarea>
             </div>
-            <div class="form-actions">
+            <div class="form-actions" style="margin-top: 12px;">
               <button type="submit" class="btn btn-sm btn-primary">Save</button>
               <button type="button" (click)="cancelEdit()" class="btn btn-sm">Cancel</button>
             </div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { BlogService, BlogPost } from '../blog.service';
+import { BlogService, BlogPost, Category } from '../blog.service';
 
 @Component({
   selector: 'app-blog-list',
@@ -14,6 +14,7 @@ import { BlogService, BlogPost } from '../blog.service';
 export class BlogListComponent implements OnInit {
   posts: BlogPost[] = [];
   filteredPosts: BlogPost[] = [];
+  availableCategories: Category[] = [];
   searchTerm: string = '';
   editingPostId: number | null = null;
   editingPost: Partial<BlogPost> = {};
@@ -22,7 +23,15 @@ export class BlogListComponent implements OnInit {
   constructor(private blogService: BlogService) {}
 
   ngOnInit(): void {
+    this.loadCategories();
     this.loadPosts();
+  }
+
+  loadCategories(): void {
+    this.blogService.getCategories().subscribe({
+      next: (cats) => { this.availableCategories = cats; },
+      error: (err) => console.error('Error loading categories:', err)
+    });
   }
 
   loadPosts(): void {
@@ -53,6 +62,30 @@ export class BlogListComponent implements OnInit {
   startEdit(post: BlogPost): void {
     this.editingPostId = post.id;
     this.editingPost = { ...post };
+
+    // Mapeamos las categorías actuales a sus IDs para poder editarlas con los checkboxes
+    if (post.categories_detail && post.categories_detail.length > 0) {
+      this.editingPost.categories = post.categories_detail.map(c => c.id);
+    } else {
+      this.editingPost.categories = [];
+    }
+  }
+
+  isCategorySelected(categoryId: number): boolean {
+    return this.editingPost.categories?.includes(categoryId) ?? false;
+  }
+
+  onCategoryToggle(categoryId: number, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (!this.editingPost.categories) this.editingPost.categories = [];
+
+    if (isChecked) {
+      if (!this.editingPost.categories.includes(categoryId)) {
+        this.editingPost.categories.push(categoryId);
+      }
+    } else {
+      this.editingPost.categories = this.editingPost.categories.filter(id => id !== categoryId);
+    }
   }
 
   saveEdit(): void {

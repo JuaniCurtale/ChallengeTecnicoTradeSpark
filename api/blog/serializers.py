@@ -23,8 +23,10 @@ class BlogPostSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(
             queryset=Category.objects.all(),
             many=True,
-            required=False
+            required=False,
+            write_only=True
         )
+    
 
     # Incluye los comentarios asociados al post (solo lectura)
     comments = CommentSerializer(many=True, read_only=True)

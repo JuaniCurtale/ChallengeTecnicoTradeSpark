@@ -18,14 +18,17 @@ export interface BlogPost {
   created_at: string;
   updated_at: string;
   comments?: Comment[]; 
+
+  // Para LECTURA: Muestra el array de objetos
+  categories_detail?: Category[];
+  
+  // Para ESCRITURA: Enviamos los IDs de las categorías seleccionadas
+  categories?: number[];
 }
 
-export interface BlogPost {
+export interface Category{
   id: number;
-  title: string;
-  content: string;
-  created_at: string;
-  updated_at: string;
+  name: string;
 }
 
 @Injectable({
@@ -35,6 +38,10 @@ export class BlogService {
   private apiUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
+  
+  getCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.apiUrl}/categories/`);
+  }
 
   getPosts(): Observable<BlogPost[]> {
     return this.http.get<BlogPost[]>(`${this.apiUrl}/posts/`);

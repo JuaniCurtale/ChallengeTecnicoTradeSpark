@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { BlogService, BlogPost, Comment } from '../blog.service';
+import { BlogService, BlogPost, Comment, Category } from '../blog.service';
 
 @Component({
   selector: 'app-blog-detail',
@@ -12,10 +12,11 @@ import { BlogService, BlogPost, Comment } from '../blog.service';
   styleUrls: ['./blog-detail.component.css']
 })
 export class BlogDetailComponent implements OnInit {
-  post: Partial<BlogPost> = { title: '', content: '', comments: []};
+  post: Partial<BlogPost> = { title: '', content: '', comments: [],categories: []};
   postId: number | null = null;
   newCommentContent: string = '';
 
+  availableCategories: Category[] = [];
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -23,6 +24,8 @@ export class BlogDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    this.loadCategories();
     // Obtenemos el ID de los parámetros de la ruta (ej. /posts/1)
     const idParam = this.route.snapshot.paramMap.get('id');
     
@@ -32,11 +35,27 @@ export class BlogDetailComponent implements OnInit {
     }  
   }
 
+  loadCategories(): void {
+    this.blogService.getCategories().subscribe({
+      next: (cats) => {
+        this.availableCategories = cats;
+      },
+      error: (error) => console.error('Error al cargar categorías:', error)
+    });
+  }
+
   // Carga el post y sus comentarios desde el backend
   loadPost(id: number): void {
     this.blogService.getPost(id).subscribe({
       next: (data) => {
         this.post = data;
+        
+        // Si el post ya tiene categories_detail (GET), extraemos sus IDs para preparar el array `categories` (POST/PUT)
+        if (data.categories_detail && data.categories_detail.length > 0) {
+          this.post.categories = data.categories_detail.map(c => c.id);
+        } else {
+          this.post.categories = [];
+        }
       },
       error: (error) => {
         console.error('Error al cargar el post:', error);
@@ -44,6 +63,27 @@ export class BlogDetailComponent implements OnInit {
     });
   }
 
+  onCategoryToggle(categoryId: number, event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    
+    if (!this.post.categories) {
+      this.post.categories = [];
+    }
+
+    if (isChecked) {
+      // Agregar ID si no está
+      if (!this.post.categories.includes(categoryId)) {
+        this.post.categories.push(categoryId);
+      }
+    } else {
+      // Remover ID si desmarca
+      this.post.categories = this.post.categories.filter(id => id !== categoryId);
+    }
+  }
+
+  isCategorySelected(categoryId: number): boolean {
+      return this.post.categories?.includes(categoryId) ?? false;
+    }
   // Guarda un nuevo comentario para el post actual
   addComment(): void {
     if (!this.newCommentContent.trim() || !this.postId) return;
@@ -72,14 +112,18 @@ export class BlogDetailComponent implements OnInit {
   }
 
   savePost(): void {
-    this.blogService.createPost(this.post).subscribe({
-      next: (newPost) => {
-        alert('Post created successfully');
-        this.router.navigate(['/posts',newPost.id]);
+    const request$ = this.postId 
+      ? this.blogService.updatePost(this.postId, this.post)
+      : this.blogService.createPost(this.post);
+
+    request$.subscribe({
+      next: (savedPost) => {
+        alert(this.postId ? 'Post actualizado con éxito' : 'Post creado con éxito');
+        this.router.navigate(['/posts', savedPost.id || this.postId]);
       },
       error: (error) => {
-        console.error('Error creating post:', error);
-        alert('Error creating post. Please try again.');
+        console.error('Error al guardar el post:', error);
+        alert('Error al guardar el post. Intentá de nuevo.');
       }
     });
   }
