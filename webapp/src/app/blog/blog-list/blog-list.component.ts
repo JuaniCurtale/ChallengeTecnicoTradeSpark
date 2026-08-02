@@ -35,10 +35,10 @@ export class BlogListComponent implements OnInit {
   }
 
   loadPosts(): void {
-    this.blogService.getPosts().subscribe({
+    this.blogService.getPosts(this.searchTerm).subscribe({
       next: (posts) => {
         this.posts = posts;
-        this.filterPosts();
+        this.filteredPosts = posts;
       },
       error: (error) => {
         console.error('Error loading posts:', error);
@@ -129,17 +129,9 @@ export class BlogListComponent implements OnInit {
   }
 
   filterPosts(): void {
-    this.cancelEdit();
+    this.editingPostId = null;
     this.collapseAll();
-    if (!this.searchTerm.trim()) {
-      this.filteredPosts = [...this.posts];
-    } else {
-      const term = this.searchTerm.toLowerCase();
-      this.filteredPosts = this.posts.filter(post => 
-        post.title.toLowerCase().includes(term) || 
-        post.content.toLowerCase().includes(term)
-      );
-    }
+    this.loadPosts();
   }
 }
 

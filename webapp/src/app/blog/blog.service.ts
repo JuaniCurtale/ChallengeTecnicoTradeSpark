@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 //Definimos la interfaz del comentario
@@ -43,8 +43,12 @@ export class BlogService {
     return this.http.get<Category[]>(`${this.apiUrl}/categories/`);
   }
 
-  getPosts(): Observable<BlogPost[]> {
-    return this.http.get<BlogPost[]>(`${this.apiUrl}/posts/`);
+  getPosts(search?: string): Observable<BlogPost[]> {
+    let params = new HttpParams();
+  if (search && search.trim()) {
+    params = params.set('search', search.trim());
+  }
+  return this.http.get<BlogPost[]>(`${this.apiUrl}/posts/`, { params });
   }
 
   getPost(id: number): Observable<BlogPost> {
