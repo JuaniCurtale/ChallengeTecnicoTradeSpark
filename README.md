@@ -56,4 +56,5 @@ Este repositorio contiene la resolución del challenge técnico para el puesto d
    docker compose up -d
 3. **Acceder a las aplicaciones**
    Frontend http://localhost:4200
+
    Backend API http://localhost:8000
